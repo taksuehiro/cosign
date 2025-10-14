@@ -1,0 +1,419 @@
+[
+  {
+    "vendor_id": "V-LiberCraft",
+    "name": "LiberCraft",
+    "type": "スクラッチ",
+    "website": "",
+    "engagement": {
+      "status": "面談済"
+    },
+    "capabilities": [
+      "機械学習",
+      "最適化",
+      "LLM導入支援"
+    ],
+    "offerings": {
+      "products": [
+        "Dify支援"
+      ],
+      "description_short": "LLM導入/最適化のスクラッチ支援"
+    },
+    "delivery": {
+      "deployment": "ハイブリッド",
+      "is_scratch": true
+    },
+    "commercials": {
+      "man_month_jpy": "200-300"
+    },
+    "corporate": {
+      "listed": "未上場",
+      "investors": [],
+      "employees_band": "1-10"
+    },
+    "notes": "メンバーの大部分はデータサイエンティスト"
+  },
+  {
+    "vendor_id": "V-Weel",
+    "name": "Weel",
+    "type": "スクラッチ",
+    "website": "",
+    "engagement": {
+      "status": "面談済"
+    },
+    "capabilities": [
+      "受注処理AI",
+      "部分自動化"
+    ],
+    "offerings": {
+      "products": [],
+      "description_short": "受注処理の自動化/協働可能"
+    },
+    "delivery": {
+      "deployment": "ハイブリッド",
+      "is_scratch": true
+    },
+    "commercials": {
+      "man_month_jpy": "300程度"
+    },
+    "corporate": {
+      "listed": "未上場",
+      "investors": [
+        "出資あり"
+      ],
+      "employees_band": "11-50"
+    },
+    "notes": "外販目的で協働可能。研究開発能力が高そう"
+  },
+  {
+    "vendor_id": "V-LaboroAI",
+    "name": "LaboroAI",
+    "type": "スクラッチ",
+    "website": "",
+    "engagement": {
+      "status": "面談済"
+    },
+    "capabilities": [
+      "製造最適化",
+      "機械学習",
+      "生成AI",
+      "VLM"
+    ],
+    "offerings": {
+      "products": [],
+      "description_short": "製造最適化/生成AIの高度案件"
+    },
+    "delivery": {
+      "deployment": "ハイブリッド",
+      "is_scratch": true
+    },
+    "commercials": {
+      "man_month_jpy": "400-500"
+    },
+    "corporate": {
+      "listed": "上場",
+      "investors": [],
+      "employees_band": "51-200"
+    },
+    "notes": "実績豊富だがコスト高め。業務理解力が高く全体的にレベルが高い（提案受けた経験あり）"
+  },
+  {
+    "vendor_id": "V-NUCO",
+    "name": "NUCO",
+    "type": "スクラッチ",
+    "website": "",
+    "engagement": {
+      "status": "面談済"
+    },
+    "capabilities": [
+      "需要予測",
+      "価格予測",
+      "従来ML",
+      "LLM"
+    ],
+    "offerings": {
+      "products": [
+        "従来ML＋LLM"
+      ],
+      "description_short": "低価格スクラッチ/親会社支援で体制安定"
+    },
+    "delivery": {
+      "deployment": "ハイブリッド",
+      "is_scratch": true
+    },
+    "commercials": {
+      "man_month_jpy": "100-150"
+    },
+    "corporate": {
+      "listed": "未上場",
+      "investors": [
+        "出資あり"
+      ],
+      "employees_band": "51-200"
+    },
+    "notes": "低価格スクラッチ、人員の殆どがエンジニア。機械学習に強み"
+  },
+  {
+    "vendor_id": "V-TANREN",
+    "name": "TANREN",
+    "type": "SaaS",
+    "website": "",
+    "engagement": {
+      "status": "面談済"
+    },
+    "capabilities": [
+      "人材育成",
+      "営業トレーニングAI"
+    ],
+    "offerings": {
+      "products": [
+        "販売員強化AI"
+      ],
+      "description_short": "動画/音声をAI評価する教育SaaS"
+    },
+    "delivery": {
+      "deployment": "SaaS",
+      "is_scratch": false
+    },
+    "commercials": {
+      "man_month_jpy": "-"
+    },
+    "corporate": {
+      "listed": "未上場",
+      "investors": [],
+      "employees_band": "1-10"
+    },
+    "notes": "熱意強く教育観点でユニーク。バイプコーディング研修可能"
+  },
+  {
+    "vendor_id": "V-Eriza",
+    "name": "Eriza",
+    "type": "SaaS",
+    "website": "",
+    "engagement": {
+      "status": "面談済"
+    },
+    "capabilities": [
+      "ノーコード開発",
+      "LLM導入支援"
+    ],
+    "offerings": {
+      "products": [
+        "自社ノーコード製品"
+      ],
+      "description_short": "Dify的な製品を自社開発。UI自動生成など"
+    },
+    "delivery": {
+      "deployment": "SaaS",
+      "is_scratch": false
+    },
+    "commercials": {
+      "man_month_jpy": "500近辺"
+    },
+    "corporate": {
+      "listed": "未上場",
+      "investors": [
+        "MS系と競合懸念?"
+      ],
+      "employees_band": "51-200"
+    },
+    "notes": "マーケ戦略やや心配"
+  },
+  {
+    "vendor_id": "V-Fusic",
+    "name": "Fusic",
+    "type": "SI",
+    "website": "",
+    "engagement": {
+      "status": "面談済"
+    },
+    "capabilities": [
+      "AWS運用",
+      "Web＋AI統合"
+    ],
+    "offerings": {
+      "products": [],
+      "description_short": "AWSに強み。SI色が強い"
+    },
+    "delivery": {
+      "deployment": "ハイブリッド",
+      "is_scratch": true
+    },
+    "commercials": {
+      "man_month_jpy": "200-300万"
+    },
+    "corporate": {
+      "listed": "未上場",
+      "investors": [],
+      "employees_band": "51-200"
+    },
+    "notes": "AWS運用およびSI能力が充実。営業人員〇"
+  },
+  {
+    "vendor_id": "V-LightBlue",
+    "name": "LightBlue",
+    "type": "SaaS",
+    "website": "",
+    "engagement": {
+      "status": "面談済"
+    },
+    "capabilities": [
+      "LLM製品提供"
+    ],
+    "offerings": {
+      "products": [
+        "アプリをLLMで作成する"
+      ],
+      "description_short": "LLM製品SaaS"
+    },
+    "delivery": {
+      "deployment": "SaaS",
+      "is_scratch": false
+    },
+    "commercials": {
+      "man_month_jpy": "-"
+    },
+    "corporate": {
+      "listed": "未上場",
+      "investors": [
+        "清水建設"
+      ],
+      "employees_band": "11-50"
+    },
+    "notes": "月額利用料1,500円の記述あり。営業人員〇"
+  },
+  {
+    "vendor_id": "V-アビームコンサルティング株式会社",
+    "name": "アビームコンサルティング株式会社",
+    "type": "スクラッチ",
+    "website": "https://www.abeam.com/jp/ja/",
+    "engagement": {
+      "status": "面談済"
+    },
+    "capabilities": [
+      "■マネジメントコンサルティング",
+      "(経営診断・戦略立案・M&A・アライアンス)",
+      "■ビジネスプロセス",
+      "コンサルティング"
+    ],
+    "offerings": {
+      "products": [
+        "・XXXXX\n・YYYYYY\n・ZZZZZ"
+      ],
+      "description_short": "■マネジメントコンサルティング\n(経営診断・戦略立案・M&A・アライアンス)\n■ビジネスプロセス コンサルティング\n(業務改革・組織改革・アウトソーシング)\n■ITコンサルティング\n(IT戦略・企画立案・システム開発・パッケージ導入・保守)\n■アウトソーシング"
+    },
+    "delivery": {
+      "deployment": "ハイブリッド",
+      "is_scratch": true
+    },
+    "commercials": {
+      "man_month_jpy": "-"
+    },
+    "corporate": {
+      "listed": "不明",
+      "investors": [],
+      "employees_band": ""
+    },
+    "notes": "関与案件は以下の通り。他案件に関与して頂くか継続検討。\n■XXXXXX\n■YYYYYY"
+  },
+  {
+    "vendor_id": "V-AWS",
+    "name": "AWS",
+    "type": "スクラッチ",
+    "website": "https://aws.amazon.com/jp/",
+    "engagement": {
+      "status": "面談済"
+    },
+    "capabilities": [
+      "AWSを使った開発パートナーの紹介"
+    ],
+    "offerings": {
+      "products": [],
+      "description_short": "AWSを使った開発パートナーの紹介"
+    },
+    "delivery": {
+      "deployment": "ハイブリッド",
+      "is_scratch": true
+    },
+    "commercials": {
+      "man_month_jpy": "-"
+    },
+    "corporate": {
+      "listed": "不明",
+      "investors": [],
+      "employees_band": ""
+    },
+    "notes": ""
+  },
+  {
+    "vendor_id": "V-KnowledgeSense",
+    "name": "KnowledgeSense",
+    "type": "SaaS",
+    "website": "https://knowledgesense.jp/",
+    "engagement": {
+      "status": "面談済"
+    },
+    "capabilities": [
+      "RAG応用に強味",
+      "/",
+      "日本の大企業の可能性を引き出すビジョンを持ち,レスポンスも超速",
+      "セキュアな法人向け生成AIチャットシステム。ChatGPTを安全に業務活用でき,社内情報の取り扱いにも配慮。"
+    ],
+    "offerings": {
+      "products": [
+        "ChatSense"
+      ],
+      "description_short": "RAG応用に強味/日本の大企業の可能性を引き出すビジョンを持ち、レスポンスも超速"
+    },
+    "delivery": {
+      "deployment": "SaaS",
+      "is_scratch": false
+    },
+    "commercials": {
+      "man_month_jpy": "-"
+    },
+    "corporate": {
+      "listed": "不明",
+      "investors": [],
+      "employees_band": ""
+    },
+    "notes": ""
+  },
+  {
+    "vendor_id": "V-Persol (Work Switch Consulting)",
+    "name": "Persol (Work Switch Consulting)",
+    "type": "スクラッチ",
+    "website": "https://www.persol-wsc.co.jp/",
+    "engagement": {
+      "status": "面談済"
+    },
+    "capabilities": [
+      "市民開発サポートデスクでも実績。生成AI分野の教育パートナーとしても手を挙げてくれている"
+    ],
+    "offerings": {
+      "products": [],
+      "description_short": "市民開発サポートデスクでも実績。生成AI分野の教育パートナーとしても手を挙げてくれている"
+    },
+    "delivery": {
+      "deployment": "ハイブリッド",
+      "is_scratch": true
+    },
+    "commercials": {
+      "man_month_jpy": "-"
+    },
+    "corporate": {
+      "listed": "不明",
+      "investors": [],
+      "employees_band": ""
+    },
+    "notes": ""
+  },
+  {
+    "vendor_id": "V-Google Cloud Japan",
+    "name": "Google Cloud Japan",
+    "type": "スクラッチ",
+    "website": "https://cloud.google.com/?hl=ja",
+    "engagement": {
+      "status": "面談済"
+    },
+    "capabilities": [
+      "GCPを使った開発パートナーの紹介"
+    ],
+    "offerings": {
+      "products": [],
+      "description_short": "GCPを使った開発パートナーの紹介"
+    },
+    "delivery": {
+      "deployment": "ハイブリッド",
+      "is_scratch": true
+    },
+    "commercials": {
+      "man_month_jpy": "-"
+    },
+    "corporate": {
+      "listed": "不明",
+      "investors": [],
+      "employees_band": ""
+    },
+    "notes": ""
+  },
+]  
