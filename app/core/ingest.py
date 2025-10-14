@@ -22,56 +22,93 @@ def load_vendors_data(json_path: str) -> List[Dict[str, Any]]:
 
 
 def build_text_from_vendor(vendor: Dict[str, Any]) -> str:
-    """ベンダー情報からテキストを構築"""
+    """ベンダー情報からテキストを構築（すべてのフィールドを安全に文字列化）"""
     text_parts = []
     
-    # name
-    if vendor.get('name'):
-        text_parts.append(vendor['name'])
+    # すべてのフィールドを安全に文字列化して処理
+    for key, value in vendor.items():
+        if value is None:
+            continue
+            
+        if isinstance(value, str):
+            # 文字列はそのまま追加
+            if value.strip():  # 空文字列は除外
+                text_parts.append(value)
+        elif isinstance(value, list):
+            # リストは要素を結合
+            if value:  # 空リストは除外
+                list_text = ' '.join(str(item) for item in value if item is not None)
+                if list_text.strip():
+                    text_parts.append(list_text)
+        elif isinstance(value, dict):
+            # 辞書は再帰的に処理
+            dict_text = _flatten_dict_to_text(value)
+            if dict_text.strip():
+                text_parts.append(dict_text)
+        else:
+            # その他の型は文字列化
+            text_parts.append(str(value))
     
-    # type
-    if vendor.get('type'):
-        text_parts.append(vendor['type'])
+    return ' '.join(text_parts)
+
+
+def _flatten_dict_to_text(data: Dict[str, Any], prefix: str = "") -> str:
+    """辞書を平坦化してテキストに変換"""
+    text_parts = []
     
-    # capabilities
-    if vendor.get('capabilities') and isinstance(vendor['capabilities'], list):
-        capabilities_text = ' '.join(vendor['capabilities'])
-        text_parts.append(capabilities_text)
-    
-    # offerings.description_short
-    if vendor.get('offerings', {}).get('description_short'):
-        text_parts.append(vendor['offerings']['description_short'])
-    
-    # notes
-    if vendor.get('notes'):
-        text_parts.append(vendor['notes'])
+    for key, value in data.items():
+        if value is None:
+            continue
+            
+        if isinstance(value, str):
+            if value.strip():
+                text_parts.append(value)
+        elif isinstance(value, list):
+            if value:
+                list_text = ' '.join(str(item) for item in value if item is not None)
+                if list_text.strip():
+                    text_parts.append(list_text)
+        elif isinstance(value, dict):
+            # 再帰的に処理
+            nested_text = _flatten_dict_to_text(value)
+            if nested_text.strip():
+                text_parts.append(nested_text)
+        else:
+            text_parts.append(str(value))
     
     return ' '.join(text_parts)
 
 
 def build_metadata_from_vendor(vendor: Dict[str, Any]) -> Dict[str, Any]:
-    """ベンダー情報からメタデータを構築"""
+    """ベンダー情報からメタデータを構築（すべての値を安全に文字列化）"""
     meta = {}
     
     # vendor_id
     if vendor.get('vendor_id'):
-        meta['vendor_id'] = vendor['vendor_id']
+        meta['vendor_id'] = str(vendor['vendor_id'])
     
     # name
     if vendor.get('name'):
-        meta['name'] = vendor['name']
+        meta['name'] = str(vendor['name'])
     
     # type
     if vendor.get('type'):
-        meta['type'] = vendor['type']
+        meta['type'] = str(vendor['type'])
     
     # corporate.listed
     if vendor.get('corporate', {}).get('listed'):
-        meta['listed'] = vendor['corporate']['listed']
+        meta['listed'] = str(vendor['corporate']['listed'])
     
     # delivery.deployment
     if vendor.get('delivery', {}).get('deployment'):
-        meta['deployment'] = vendor['delivery']['deployment']
+        meta['deployment'] = str(vendor['delivery']['deployment'])
+    
+    # 追加のメタデータフィールドも安全に文字列化
+    if vendor.get('commercials', {}).get('man_month_jpy'):
+        meta['man_month_jpy'] = str(vendor['commercials']['man_month_jpy'])
+    
+    if vendor.get('corporate', {}).get('employees_band'):
+        meta['employees_band'] = str(vendor['corporate']['employees_band'])
     
     return meta
 
@@ -80,13 +117,18 @@ def process_vendors_data(vendors: List[Dict[str, Any]]) -> Tuple[List[str], List
     """ベンダーデータを処理してテキストとメタデータを生成"""
     texts = []
     metadata = []
+    failed_count = 0
     
-    for vendor in vendors:
+    for i, vendor in enumerate(vendors):
         try:
+            # デバッグ情報
+            vendor_id = vendor.get('vendor_id', f'vendor_{i}')
+            logger.debug(f"Processing vendor {i+1}/{len(vendors)}: {vendor_id}")
+            
             # テキスト生成
             text = build_text_from_vendor(vendor)
             if not text.strip():
-                logger.warning(f"Skipping vendor {vendor.get('vendor_id', 'unknown')} - empty text")
+                logger.warning(f"Skipping vendor {vendor_id} - empty text")
                 continue
             
             # メタデータ生成
@@ -95,10 +137,14 @@ def process_vendors_data(vendors: List[Dict[str, Any]]) -> Tuple[List[str], List
             texts.append(text)
             metadata.append(meta)
             
+            logger.debug(f"Successfully processed vendor {vendor_id}")
+            
         except Exception as e:
-            logger.error(f"Failed to process vendor {vendor.get('vendor_id', 'unknown')}: {e}")
+            failed_count += 1
+            logger.error(f"Failed to process vendor {vendor.get('vendor_id', f'vendor_{i}')}: {e}")
+            logger.error(f"Vendor data sample: {str(vendor)[:200]}...")
             continue
     
-    logger.info(f"Processed {len(texts)} vendors successfully")
+    logger.info(f"Processed {len(texts)} vendors successfully, {failed_count} failed")
     return texts, metadata
 
