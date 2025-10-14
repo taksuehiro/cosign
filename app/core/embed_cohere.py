@@ -93,8 +93,9 @@ def _find_first_float_array(obj: Any) -> Optional[Any]:
 def _bedrock_embed_documents_boto3(texts: List[str], input_type: str) -> List[List[float]]:
     client = _get_bedrock_client()
     body = {
-        "input": texts,
-        "input_type": input_type,
+        "texts": texts,
+        # Cohere v4 は texts キーを要求。input_type は仕様により省略可能だが残す場合は以下行を有効化。
+        # "input_type": input_type,
     }
     resp = client.invoke_model(
         modelId=settings.BEDROCK_EMBEDDINGS_MODEL_ID,
@@ -113,8 +114,8 @@ def _bedrock_embed_documents_boto3(texts: List[str], input_type: str) -> List[Li
 def _bedrock_embed_query_boto3(query: str) -> List[float]:
     client = _get_bedrock_client()
     body = {
-        "input": [query],
-        "input_type": "search_query",
+        "texts": [query],
+        # "input_type": "search_query",
     }
     resp = client.invoke_model(
         modelId=settings.BEDROCK_EMBEDDINGS_MODEL_ID,
@@ -127,7 +128,6 @@ def _bedrock_embed_query_boto3(query: str) -> List[float]:
     if arr is None:
         logger.error(f"boto3 bedrock query response keys: {list(payload.keys()) if isinstance(payload, dict) else type(payload)}")
         raise ValueError("boto3: Failed to locate float embedding in response")
-    # クエリは 1 本想定
     if isinstance(arr, list) and len(arr) > 0 and isinstance(arr[0], (int, float)):
         return arr  # type: ignore
     if isinstance(arr, list) and len(arr) > 0 and isinstance(arr[0], list):
