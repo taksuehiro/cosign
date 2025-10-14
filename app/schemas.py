@@ -70,3 +70,4 @@ class EvalResponse(BaseModel):
 class HealthResponse(BaseModel):
     status: str
     message: str
+

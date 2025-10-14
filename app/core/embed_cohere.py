@@ -95,3 +95,4 @@ def embed_query(query: str, model: str = None) -> np.ndarray:
     """
     embeddings = embed_texts([query], input_type="search_query", model=model)
     return embeddings[0]  # 単一クエリなので最初の要素を返す
+

@@ -175,3 +175,4 @@ tail -f /tmp/vectorstore/*.log
 ## ライセンス
 
 MIT License
+

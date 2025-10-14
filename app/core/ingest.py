@@ -101,3 +101,4 @@ def process_vendors_data(vendors: List[Dict[str, Any]]) -> Tuple[List[str], List
     
     logger.info(f"Processed {len(texts)} vendors successfully")
     return texts, metadata
+

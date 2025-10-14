@@ -147,3 +147,4 @@ def calculate_metrics(
     logger.info(f"Average metrics @{k}: R={avg_recall:.3f}, MRR={avg_mrr:.3f}, nDCG={avg_ndcg:.3f}")
     
     return avg_recall, avg_mrr, avg_ndcg
+

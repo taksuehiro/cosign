@@ -142,3 +142,4 @@ def test_process_vendors_data():
     assert metadata[1]["vendor_id"] == "V-Test2"
     assert metadata[0]["listed"] == "未上場"
     assert metadata[1]["listed"] == "上場"
+

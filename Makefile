@@ -56,3 +56,4 @@ run-eval:
 	curl -X POST http://localhost:8080/api/v1/eval \
 		-H "Content-Type: application/json" \
 		-d '{"queries_path":"data/queries.eval.jsonl","k":10}'
+

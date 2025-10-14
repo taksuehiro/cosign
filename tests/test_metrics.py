@@ -151,3 +151,4 @@ def test_edge_cases():
     assert recall == 0.0
     assert mrr == 0.0
     assert ndcg == 0.0
+

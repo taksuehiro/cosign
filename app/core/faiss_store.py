@@ -126,3 +126,4 @@ def create_store_paths(base_dir: str, index_name: str) -> Tuple[str, str]:
     index_path = os.path.join(index_dir, "index.faiss")
     meta_path = os.path.join(index_dir, "meta.json")
     return index_path, meta_path
+

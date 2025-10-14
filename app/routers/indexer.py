@@ -89,3 +89,4 @@ async def create_index(request: IndexRequest):
     except Exception as e:
         logger.error(f"Index creation failed: {e}")
         raise HTTPException(status_code=500, detail=f"Index creation failed: {str(e)}")
+

@@ -120,3 +120,4 @@ def test_faiss_store():
         meta_results = new_store.get_metadata_by_indices(indices)
         assert len(meta_results) == 2
         assert meta_results[0]["vendor_id"] == "V-1"  # 最高スコアのアイテム
+

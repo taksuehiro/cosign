@@ -143,3 +143,4 @@ async def evaluate_search(request: EvalRequest):
     except Exception as e:
         logger.error(f"Evaluation failed: {e}")
         raise HTTPException(status_code=500, detail=f"Evaluation failed: {str(e)}")
+

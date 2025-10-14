@@ -27,3 +27,4 @@ def get_s3_bucket_name() -> Optional[str]:
 def get_s3_prefix() -> str:
     """S3プレフィックスを取得"""
     return settings.S3_PREFIX
+
