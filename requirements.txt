@@ -9,4 +9,8 @@ python-dotenv>=1.0.1
 orjson>=3.10.0
 pytest>=7.4.0
 pytest-asyncio>=0.21.0
+# Bedrock対応
+langchain-aws>=0.1.0
+# オプション: Cohere直API使用時
+# cohere>=5.5.0
 

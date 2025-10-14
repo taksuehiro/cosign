@@ -30,8 +30,14 @@ pip install -r requirements.txt
 # .envファイルを作成
 cp env.example .env
 
-# .envファイルを編集してCohere APIキーを設定
-COHERE_API_KEY=your_actual_api_key_here
+# Bedrock使用時（推奨）
+USE_BEDROCK=true
+BEDROCK_EMBEDDINGS_MODEL_ID=cohere.embed-v4:0
+AWS_REGION=ap-northeast-1
+
+# Cohere直API使用時
+# USE_BEDROCK=false
+# COHERE_API_KEY=your_actual_api_key_here
 ```
 
 ### 3. データ準備
@@ -117,12 +123,14 @@ pytest tests/test_metrics.py -v
 
 | 変数名 | 必須 | デフォルト | 説明 |
 |--------|------|------------|------|
-| `COHERE_API_KEY` | ✓ | - | Cohere APIキー |
+| `USE_BEDROCK` | - | true | Bedrock使用フラグ |
+| `BEDROCK_EMBEDDINGS_MODEL_ID` | - | cohere.embed-v4:0 | Bedrock埋め込みモデルID |
 | `AWS_REGION` | - | ap-northeast-1 | AWSリージョン |
+| `COHERE_API_KEY` | USE_BEDROCK=false時 | - | Cohere APIキー |
 | `S3_BUCKET_NAME` | - | - | S3バケット名（S3連携時） |
 | `S3_PREFIX` | - | faiss/exp | S3プレフィックス |
 | `VECTOR_DIR` | - | /tmp/vectorstore | ベクトルストアディレクトリ |
-| `INDEX_NAME` | - | vendor_cohere_v1 | インデックス名 |
+| `INDEX_NAME` | - | vendor_cohere_v4 | インデックス名 |
 | `JSON_PATH` | - | data/vendors.json | ベンダーデータパス |
 
 ### S3連携
