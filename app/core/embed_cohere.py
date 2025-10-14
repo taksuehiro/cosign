@@ -50,6 +50,8 @@ def _extract_bedrock_embeddings(obj):
     """Bedrockの返却形を正規化し、List[List[float]] または List[float] を返す。
     許容する形:
       - [{"embedding": {"float": [...] }}, ...]
+      - [{"embeddings": {"float": [...] }}, ...]
+      - {"embedding": {"float": [...] }} / {"embeddings": {"float": [...] }}
       - {"float": [[...], ...]} または {"float": [...]}
       - 直接 List[List[float]] / List[float]
     """
@@ -58,18 +60,52 @@ def _extract_bedrock_embeddings(obj):
         logger.error(f"Unexpected string response from Bedrock: {obj[:200]}")
         raise ValueError("Bedrock returned string instead of numeric embeddings")
 
-    # listで、要素がdict（embeddingキーを含む）
+    # listで、要素がdictの場合
     if isinstance(obj, list) and obj and isinstance(obj[0], dict):
-        try:
-            extracted = [item.get("embedding", {}).get("float", item) for item in obj]
-            return extracted
-        except Exception as e:
-            logger.warning(f"Unexpected Bedrock embedding structure in list[dict]: {e}")
-            raise
+        new_embeddings = []
+        for item in obj:
+            if not isinstance(item, dict):
+                new_embeddings.append(item)
+                continue
+            if "embedding" in item:
+                v = item["embedding"]
+                if isinstance(v, dict) and "float" in v:
+                    new_embeddings.append(v["float"])
+                    continue
+                if isinstance(v, list):
+                    new_embeddings.append(v)
+                    continue
+            if "embeddings" in item:
+                v = item["embeddings"]
+                if isinstance(v, dict) and "float" in v:
+                    new_embeddings.append(v["float"])
+                    continue
+                if isinstance(v, list):
+                    new_embeddings.append(v)
+                    continue
+            if "float" in item:
+                new_embeddings.append(item["float"])
+                continue
+            # ここまでで抽出できなければ、そのまま追加（最後にnp.arrayで検証）
+            new_embeddings.append(item)
+        return new_embeddings
 
-    # dictで、floatキーを持つ
-    if isinstance(obj, dict) and "float" in obj:
-        return obj["float"]
+    # dictで、embedding(s)/floatを持つ場合
+    if isinstance(obj, dict):
+        if "embedding" in obj:
+            v = obj["embedding"]
+            if isinstance(v, dict) and "float" in v:
+                return v["float"]
+            if isinstance(v, list):
+                return v
+        if "embeddings" in obj:
+            v = obj["embeddings"]
+            if isinstance(v, dict) and "float" in v:
+                return v["float"]
+            if isinstance(v, list):
+                return v
+        if "float" in obj:
+            return obj["float"]
 
     # そのまま返す（List[List[float]] / List[float] 想定）
     return obj
