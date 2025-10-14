@@ -1,14 +1,25 @@
 """
-埋め込み処理（Bedrock/Cohere対応, Bedrockのfloat構造対応＋再帰抽出と詳細ログ）
+埋め込み処理（Bedrock/Cohere対応, Bedrockのfloat構造対応＋再帰抽出と詳細ログ＋boto3フォールバック）
 """
 import numpy as np
 import logging
+import json
 from typing import List, Any, Optional
 from app.config import settings
 
 logger = logging.getLogger(__name__)
 
 _embeddings_client = None
+_bedrock_client = None  # boto3 runtime client
+
+
+def _get_bedrock_client():
+    global _bedrock_client
+    if _bedrock_client is None:
+        import boto3
+        _bedrock_client = boto3.client("bedrock-runtime", region_name=settings.AWS_REGION)
+        logger.info("Initialized boto3 bedrock-runtime client")
+    return _bedrock_client
 
 
 def get_embeddings_client():
@@ -48,21 +59,14 @@ def _is_number_sequence(seq: Any) -> bool:
 
 
 def _find_first_float_array(obj: Any) -> Optional[Any]:
-    """Bedrockの返却から最初に見つかった数値配列（list[float] or list[list[float]]）を返す。
-    見つからない場合はNone。
-    優先順: dictの 'embedding'/'embeddings'/'float' → list要素再帰 → dict値再帰。
-    """
-    # 直接数値配列
+    """Bedrockの返却から最初に見つかった数値配列（list[float] or list[list[float]]）を返す。"""
     if isinstance(obj, list):
         if len(obj) == 0:
             return obj
-        # list[float]
         if not isinstance(obj[0], (list, dict)) and _is_number_sequence(obj):
             return obj
-        # list[list[float]]
         if isinstance(obj[0], list) and all(_is_number_sequence(x) for x in obj if isinstance(x, list)):
             return obj
-        # list[...] 再帰
         for el in obj:
             cand = _find_first_float_array(el)
             if cand is not None:
@@ -75,19 +79,64 @@ def _find_first_float_array(obj: Any) -> Optional[Any]:
                 cand = _find_first_float_array(obj[key])
                 if cand is not None:
                     return cand
-        # その他のキーも再帰
         for v in obj.values():
             cand = _find_first_float_array(v)
             if cand is not None:
                 return cand
         return None
 
-    # それ以外（数値配列ではない）
     return None
 
 
+# ===== boto3 直叩き =====
+
+def _bedrock_embed_documents_boto3(texts: List[str], input_type: str) -> List[List[float]]:
+    client = _get_bedrock_client()
+    body = {
+        "input": texts,
+        "input_type": input_type,
+    }
+    resp = client.invoke_model(
+        modelId=settings.BEDROCK_EMBEDDINGS_MODEL_ID,
+        body=json.dumps(body),
+        accept="application/json",
+        contentType="application/json",
+    )
+    payload = json.loads(resp["body"].read()) if hasattr(resp.get("body"), "read") else json.loads(resp["body"])  # type: ignore
+    arr = _find_first_float_array(payload)
+    if arr is None:
+        logger.error(f"boto3 bedrock response keys: {list(payload.keys()) if isinstance(payload, dict) else type(payload)}")
+        raise ValueError("boto3: Failed to locate float embeddings in response")
+    return arr  # type: ignore
+
+
+def _bedrock_embed_query_boto3(query: str) -> List[float]:
+    client = _get_bedrock_client()
+    body = {
+        "input": [query],
+        "input_type": "search_query",
+    }
+    resp = client.invoke_model(
+        modelId=settings.BEDROCK_EMBEDDINGS_MODEL_ID,
+        body=json.dumps(body),
+        accept="application/json",
+        contentType="application/json",
+    )
+    payload = json.loads(resp["body"].read()) if hasattr(resp.get("body"), "read") else json.loads(resp["body"])  # type: ignore
+    arr = _find_first_float_array(payload)
+    if arr is None:
+        logger.error(f"boto3 bedrock query response keys: {list(payload.keys()) if isinstance(payload, dict) else type(payload)}")
+        raise ValueError("boto3: Failed to locate float embedding in response")
+    # クエリは 1 本想定
+    if isinstance(arr, list) and len(arr) > 0 and isinstance(arr[0], (int, float)):
+        return arr  # type: ignore
+    if isinstance(arr, list) and len(arr) > 0 and isinstance(arr[0], list):
+        return arr[0]  # type: ignore
+    return arr  # type: ignore
+
+
 def embed_texts(texts: List[str], input_type: str = "search_document", model: str = None) -> np.ndarray:
-    """Bedrock/Cohereでテキストを埋め込み。Bedrockの未知構造にも再帰で対応。"""
+    """Bedrock/Cohereでテキストを埋め込み。Bedrockはlangchain_aws→失敗時boto3にフォールバック。"""
     client = get_embeddings_client()
     embeddings: List[np.ndarray] = []
 
@@ -95,38 +144,22 @@ def embed_texts(texts: List[str], input_type: str = "search_document", model: st
         batch = texts[i:i + settings.BATCH_SIZE]
         try:
             if settings.USE_BEDROCK:
-                raw = client.embed_documents(batch)
+                raw = None
+                try:
+                    raw = client.embed_documents(batch)  # langchain_aws
+                except Exception as e:
+                    logger.warning(f"langchain_aws embed_documents failed, falling back to boto3: {e}")
 
-                # 詳細ログ（最初のバッチのみ冗長）
-                if i == 0:
-                    logger.debug(f"Bedrock raw type: {type(raw)}")
-                    if isinstance(raw, list):
-                        logger.debug(f"Bedrock raw list length: {len(raw)}")
-                        if raw and isinstance(raw[0], dict):
-                            logger.debug(f"Bedrock raw[0] keys: {list(raw[0].keys())}")
-                    elif isinstance(raw, dict):
-                        logger.debug(f"Bedrock raw dict keys: {list(raw.keys())}")
-                    elif isinstance(raw, str):
-                        logger.error(f"Bedrock raw string head: {raw[:200]}")
-
-                arr = _find_first_float_array(raw)
-                if arr is None:
-                    raise ValueError("Failed to locate float embeddings in Bedrock response")
+                arr = _find_first_float_array(raw) if raw is not None else None
+                # フォールバック条件: 数値配列に解決できない/型がstr/['float']など
+                if arr is None or (isinstance(raw, list) and raw == ["float"]) or isinstance(raw, str):
+                    logger.warning("Falling back to boto3 bedrock-runtime for embeddings")
+                    arr = _bedrock_embed_documents_boto3(batch, input_type)
 
                 batch_embeddings = np.array(arr, dtype=np.float32)
-
-                # list[float] の場合は (1, dim) に揃える
                 if batch_embeddings.ndim == 1:
                     batch_embeddings = batch_embeddings.reshape(1, -1)
-
-                # 期待: (batch, dim)
-                if batch_embeddings.shape[0] != len(batch):
-                    logger.warning(
-                        f"Bedrock embeddings batch size mismatch: got {batch_embeddings.shape[0]} vs expected {len(batch)}"
-                    )
-
             else:
-                # Cohere直API
                 if model is None:
                     model = settings.COHERE_MODEL
                 response = client.embed(texts=batch, model=model, input_type=input_type)
@@ -137,7 +170,6 @@ def embed_texts(texts: List[str], input_type: str = "search_document", model: st
 
         except Exception as e:
             logger.error(f"Failed to embed batch {i//settings.BATCH_SIZE + 1}: {e}")
-            # 追加の構造ダンプ（安全範囲内）
             logger.error(f"Batch sample: {batch[:2] if batch else 'empty'}")
             raise
 
@@ -149,23 +181,19 @@ def embed_query(query: str, model: str = None) -> np.ndarray:
 
     try:
         if settings.USE_BEDROCK:
-            raw = client.embed_query(query)
+            raw = None
+            try:
+                raw = client.embed_query(query)
+            except Exception as e:
+                logger.warning(f"langchain_aws embed_query failed, falling back to boto3: {e}")
 
-            # 詳細ログ
-            logger.debug(f"Bedrock query raw type: {type(raw)}")
-            if isinstance(raw, dict):
-                logger.debug(f"Bedrock query raw keys: {list(raw.keys())}")
-            elif isinstance(raw, list):
-                logger.debug(f"Bedrock query raw list length: {len(raw)}")
-
-            arr = _find_first_float_array(raw)
-            if arr is None:
-                raise ValueError("Failed to locate float embedding in Bedrock query response")
+            arr = _find_first_float_array(raw) if raw is not None else None
+            if arr is None or isinstance(raw, str):
+                logger.warning("Falling back to boto3 bedrock-runtime for query embedding")
+                arr = _bedrock_embed_query_boto3(query)
 
             emb = np.array(arr, dtype=np.float32)
             if emb.ndim == 1:
-                emb = emb.reshape(1, -1)
-            elif emb.ndim > 2:
                 emb = emb.reshape(1, -1)
         else:
             if model is None:
