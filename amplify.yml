@@ -1,0 +1,25 @@
+version: 1
+applications:
+  - appRoot: frontend
+    frontend:
+      phases:
+        preBuild:
+          commands:
+            - npx --yes corepack enable || true
+            - node -v && npm -v
+            - npm ci
+        build:
+          commands:
+            - npm run build
+      artifacts:
+        baseDirectory: .next
+        files:
+          - '**/*'
+      cache:
+        paths:
+          - node_modules/**/*
+          - .next/cache/**/*
+    environment:
+      variables:
+        NEXT_PUBLIC_API_BASE: https://api.3ii.biz
+        NODE_OPTIONS: --max-old-space-size=4096
