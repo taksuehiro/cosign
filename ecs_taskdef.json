@@ -1,31 +1,37 @@
-[
-  {
-    "name": "cosign-rag-container",
-    "image": "067717894185.dkr.ecr.ap-northeast-1.amazonaws.com/cosign-rag-api:cosign1",
-    "essential": true,
-    "portMappings": [
-      {
-        "containerPort": 8080,
-        "protocol": "tcp"
-      }
-    ],
-    "environment": [
-      {"name": "AWS_REGION", "value": "ap-northeast-1"},
-      {"name": "S3_BUCKET_NAME", "value": "cosign-test"},
-      {"name": "S3_PREFIX", "value": "faiss/exp"},
-      {"name": "BEDROCK_EMBEDDINGS_MODEL_ID", "value": "cohere.embed-multilingual-v4"},
-      {"name": "USE_BEDROCK", "value": "true"},
-      {"name": "VECTOR_DIR", "value": "/tmp/vectorstore"},
-      {"name": "INDEX_NAME", "value": "vendor_cohere_v4"},
-      {"name": "JSON_PATH", "value": "vendors.json"}
-    ],
-    "logConfiguration": {
-      "logDriver": "awslogs",
-      "options": {
-        "awslogs-group": "/ecs/cosign-rag-api",
-        "awslogs-region": "ap-northeast-1",
-        "awslogs-stream-prefix": "ecs"
+{
+  "family": "cosign-rag-api",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "1024",
+  "memory": "2048",
+  "executionRoleArn": "arn:aws:iam::067717894185:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::067717894185:role/ecsTaskAppRole",
+  "containerDefinitions": [
+    {
+      "name": "cosign-rag-container",
+      "image": "067717894185.dkr.ecr.ap-northeast-1.amazonaws.com/cosign-rag-api:cosign1",
+      "essential": true,
+      "portMappings": [
+        { "containerPort": 8080, "protocol": "tcp" }
+      ],
+      "environment": [
+        {"name": "AWS_REGION", "value": "ap-northeast-1"},
+        {"name": "S3_BUCKET_NAME", "value": "cosign-test"},
+        {"name": "S3_PREFIX", "value": "faiss/exp"},
+        {"name": "BEDROCK_EMBEDDINGS_MODEL_ID", "value": "cohere.embed-multilingual-v4"},
+        {"name": "USE_BEDROCK", "value": "true"},
+        {"name": "VECTOR_DIR", "value": "/tmp/vectorstore"},
+        {"name": "INDEX_NAME", "value": "vendor_cohere_v4"},
+        {"name": "JSON_PATH", "value": "vendors.json"}
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/cosign-rag-api",
+          "awslogs-region": "ap-northeast-1",
+          "awslogs-stream-prefix": "ecs"
+        }
       }
     }
-  }
-]
+  ]
+}
