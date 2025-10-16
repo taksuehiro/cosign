@@ -1,0 +1,80 @@
+[
+  {
+    "vendor_id": "vendor_0",
+    "name": "LiberCraft",
+    "type": "スクラッチ",
+    "listed": false
+  },
+  {
+    "vendor_id": "vendor_1",
+    "name": "Weel",
+    "type": "スクラッチ",
+    "listed": false
+  },
+  {
+    "vendor_id": "vendor_2",
+    "name": "LaboroAI",
+    "type": "スクラッチ",
+    "listed": false
+  },
+  {
+    "vendor_id": "vendor_3",
+    "name": "NUCO",
+    "type": "スクラッチ",
+    "listed": false
+  },
+  {
+    "vendor_id": "vendor_4",
+    "name": "TANREN",
+    "type": "SaaS",
+    "listed": false
+  },
+  {
+    "vendor_id": "vendor_5",
+    "name": "Eriza",
+    "type": "SaaS",
+    "listed": false
+  },
+  {
+    "vendor_id": "vendor_6",
+    "name": "Fusic",
+    "type": "SI",
+    "listed": false
+  },
+  {
+    "vendor_id": "vendor_7",
+    "name": "LightBlue",
+    "type": "SaaS",
+    "listed": false
+  },
+  {
+    "vendor_id": "vendor_8",
+    "name": "アビームコンサルティング株式会社",
+    "type": "スクラッチ",
+    "listed": false
+  },
+  {
+    "vendor_id": "vendor_9",
+    "name": "AWS",
+    "type": "スクラッチ",
+    "listed": false
+  },
+  {
+    "vendor_id": "vendor_10",
+    "name": "KnowledgeSense",
+    "type": "SaaS",
+    "listed": false
+  },
+  {
+    "vendor_id": "vendor_11",
+    "name": "Persol (Work Switch Consulting)",
+    "type": "スクラッチ",
+    "listed": false
+  },
+  {
+    "vendor_id": "vendor_12",
+    "name": "Google Cloud Japan",
+    "type": "スクラッチ",
+    "listed": false
+  }
+]
