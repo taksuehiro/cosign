@@ -25,11 +25,17 @@ app = FastAPI(
 )
 
 # CORS設定
+origins = [
+    "https://main.d30qmyqyqcxjp3.amplifyapp.com",
+    "https://api.3ii.biz",
+    "http://localhost:3000",  # ローカル開発用
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # または ["https://main.d30qmyqyqcxjp3.amplifyapp.com"]
+    allow_origins=origins,
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
 
