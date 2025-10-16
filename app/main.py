@@ -67,3 +67,9 @@ if __name__ == "__main__":
         reload=True
     )
 
+@router.post("/search", response_model=QueryResponse)
+async def search_alias(request: QueryRequest):
+    """
+    互換用エイリアス: /search → /query
+    """
+    return await search_vendors(request)

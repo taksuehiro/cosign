@@ -63,12 +63,6 @@ def apply_filters(results: List[SearchResult], filters: Optional[Dict[str, Any]]
 async def search_vendors(request: QueryRequest):
     """
     ベンダー検索を実行
-    
-    Args:
-        request: 検索リクエスト
-    
-    Returns:
-        検索結果
     """
     try:
         # ストア取得
@@ -107,30 +101,23 @@ async def search_vendors(request: QueryRequest):
         if request.mmr_lambda is not None and len(results) > 1:
             logger.info(f"Applying MMR with lambda={request.mmr_lambda}")
             
-            # 埋め込みベクトルを取得（MMR用）
-            # 注意: 実際の実装では、候補の埋め込みベクトルが必要
-            # ここでは簡略化してスコアベースでMMRを適用
             candidate_scores = np.array([r.score for r in results])
             candidate_indices = np.array([i for i in range(len(results))])
             
-            # 簡略化されたMMR（実際の実装では候補埋め込みが必要）
             reranked_scores, reranked_indices = apply_mmr_filtering(
                 query_embedding,
-                query_embedding.reshape(1, -1).repeat(len(results), axis=0),  # 簡略化
+                query_embedding.reshape(1, -1).repeat(len(results), axis=0),
                 candidate_scores,
                 candidate_indices,
                 request.mmr_lambda,
                 request.k
             )
             
-            # 結果を再ランク
             reranked_results = [results[i] for i in reranked_indices]
             results = reranked_results[:request.k]
         
         # フィルタ適用
         results = apply_filters(results, request.filters)
-        
-        # 最終的な結果数に調整
         results = results[:request.k]
         
         logger.info(f"Search returned {len(results)} results")
@@ -141,3 +128,13 @@ async def search_vendors(request: QueryRequest):
     except Exception as e:
         logger.error(f"Search failed: {e}")
         raise HTTPException(status_code=500, detail=f"Search failed: {str(e)}")
+
+
+# ✅ /api/v1/search エンドポイントを追加
+@router.post("/search", response_model=QueryResponse)
+async def search_alias(request: QueryRequest):
+    """
+    /api/v1/search エイリアス (互換用)
+    実体は /api/v1/query と同じ処理
+    """
+    return await search_vendors(request)
