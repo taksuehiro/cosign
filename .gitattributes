@@ -1,0 +1,6 @@
+# 常にLFを使用（リポジトリ内）
+* text=auto eol=lf
+
+# OS依存ファイル除外（任意）
+*.bat text eol=crlf
+*.sh text eol=lf
