@@ -38,6 +38,17 @@ app.include_router(indexer.router, prefix="/api/v1", tags=["index"])
 app.include_router(query.router, prefix="/api/v1", tags=["search"])
 app.include_router(eval.router, prefix="/api/v1", tags=["evaluation"])
 
+# ルートレベルの検索エンドポイント（フロントエンド互換用）
+from app.schemas import QueryRequest, QueryResponse
+from app.routers.query import search_vendors
+
+@app.post("/search", response_model=QueryResponse)
+async def root_search(request: QueryRequest):
+    """
+    ルートレベルの検索エンドポイント（フロントエンド互換用）
+    """
+    return await search_vendors(request)
+
 
 @app.get("/health", response_model=HealthResponse)
 async def health_check():
@@ -66,10 +77,3 @@ if __name__ == "__main__":
         port=8080,
         reload=True
     )
-
-@router.post("/search", response_model=QueryResponse)
-async def search_alias(request: QueryRequest):
-    """
-    互換用エイリアス: /search → /query
-    """
-    return await search_vendors(request)
