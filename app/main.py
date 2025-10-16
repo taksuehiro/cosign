@@ -4,6 +4,7 @@ FastAPIメインアプリケーション
 import logging
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 from app.schemas import HealthResponse
 from app.routers import indexer, query, eval
 from app.config import settings
@@ -21,6 +22,15 @@ app = FastAPI(
     description="Cohere + FAISS ベースのベンダー検索API",
     version="1.0.0",
     default_response_class=ORJSONResponse
+)
+
+# CORS設定
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # または ["https://main.d30qmyqyqcxjp3.amplifyapp.com"]
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # ルーター登録
