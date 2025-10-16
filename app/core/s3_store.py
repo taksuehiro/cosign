@@ -47,27 +47,34 @@ class S3Store:
             logger.warning("S3 client not available, skipping upload")
             return False
         
+        saved_s3 = False
         try:
             # S3キー生成
             s3_index_key = f"{self.prefix}/{index_name}/index.faiss"
             s3_meta_key = f"{self.prefix}/{index_name}/meta.json"
             
+            logger.info(f"[S3] Upload start to bucket={self.bucket_name}, prefix={self.prefix}, index={index_name}")
+            logger.info(f"[S3] index file exists={os.path.exists(local_index_path)}, size={os.path.getsize(local_index_path) if os.path.exists(local_index_path) else 'N/A'}")
+            logger.info(f"[S3] meta file exists={os.path.exists(local_meta_path)}, size={os.path.getsize(local_meta_path) if os.path.exists(local_meta_path) else 'N/A'}")
+            logger.info(f"[S3] S3 client region={self.region}")
+            
             # インデックスファイルアップロード
             self.client.upload_file(local_index_path, self.bucket_name, s3_index_key)
-            logger.info(f"Uploaded index to s3://{self.bucket_name}/{s3_index_key}")
+            logger.info(f"[S3] Uploaded index.faiss → s3://{self.bucket_name}/{s3_index_key}")
             
             # メタデータファイルアップロード
             self.client.upload_file(local_meta_path, self.bucket_name, s3_meta_key)
-            logger.info(f"Uploaded metadata to s3://{self.bucket_name}/{s3_meta_key}")
+            logger.info(f"[S3] Uploaded meta.json → s3://{self.bucket_name}/{s3_meta_key}")
             
-            return True
+            saved_s3 = True
             
         except ClientError as e:
-            logger.error(f"S3 upload failed: {e}")
-            return False
+            logger.exception(f"[S3] ClientError during upload: {e}")
         except Exception as e:
-            logger.error(f"Unexpected error during S3 upload: {e}")
-            return False
+            logger.exception(f"[S3] Unexpected error: {e}")
+        
+        logger.info(f"[S3] Final saved_s3={saved_s3}")
+        return saved_s3
     
     def download_index(self, index_name: str, local_index_path: str, local_meta_path: str) -> bool:
         """

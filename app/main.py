@@ -44,6 +44,19 @@ app.include_router(indexer.router, prefix="/api/v1", tags=["index"])
 app.include_router(query.router, prefix="/api/v1", tags=["search"])
 app.include_router(eval.router, prefix="/api/v1", tags=["evaluation"])
 
+# デバッグ用: 登録されたルートを確認
+@app.get("/debug/routes")
+async def debug_routes():
+    """デバッグ用: 登録されたルート一覧"""
+    routes = []
+    for route in app.routes:
+        if hasattr(route, 'path') and hasattr(route, 'methods'):
+            routes.append({
+                "path": route.path,
+                "methods": list(route.methods)
+            })
+    return {"routes": routes}
+
 # ルートレベルの検索エンドポイント（フロントエンド互換用）
 from app.schemas import QueryRequest, QueryResponse
 from app.routers.query import search_vendors
