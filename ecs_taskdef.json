@@ -21,7 +21,7 @@
         {"name": "BEDROCK_EMBEDDINGS_MODEL_ID", "value": "cohere.embed-multilingual-v3"},
         {"name": "USE_BEDROCK", "value": "true"},
         {"name": "VECTOR_DIR", "value": "/tmp/vectorstore"},
-        {"name": "INDEX_NAME", "value": "vendor_cohere_v4"},
+        {"name": "INDEX_NAME", "value": "vendor_cohere_v3"},
         {"name": "JSON_PATH", "value": "vendors.json"}
       ],
       "logConfiguration": {
